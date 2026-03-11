@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HUMAN OR AI? — Quiz</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="quiz-page">
+
+  <div class="bg-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <!-- Header HUD -->
+  <header class="quiz-hud">
+    <button class="hud-back" onclick="confirmExit()">← Exit</button>
+    <div class="hud-center">
+      <span class="hud-player" id="hudPlayer">Player</span>
+    </div>
+    <div class="hud-score-wrap">
+      <span class="hud-score-label">Score</span>
+      <span class="hud-score" id="hudScore">0</span>
+    </div>
+  </header>
+
+  <!-- Main quiz area -->
+  <main class="quiz-main">
+    <div class="quiz-card glass-card" id="quizCard">
+
+      <!-- Progress -->
+      <div class="progress-area">
+        <div class="progress-text">
+          <span id="questionNum">Question 1</span>
+          <span id="questionTotal">of 12</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+      </div>
+
+      <!-- Content area -->
+      <div class="question-content" id="questionContent">
+        <!-- Dynamically inserted -->
+      </div>
+
+      <!-- Answer buttons -->
+      <div class="answer-area" id="answerArea">
+        <button class="answer-btn human-btn" id="btnHuman" onclick="submitAnswer('human')">
+          <span class="answer-icon">👤</span>
+          <span class="answer-label">HUMAN</span>
+        </button>
+        <div class="answer-divider">OR</div>
+        <button class="answer-btn ai-btn" id="btnAI" onclick="submitAnswer('ai')">
+          <span class="answer-icon">🤖</span>
+          <span class="answer-label">AI</span>
+        </button>
+      </div>
+
+      <!-- Feedback overlay -->
+      <div class="feedback-overlay" id="feedbackOverlay" style="display:none;">
+        <div class="feedback-content">
+          <div class="feedback-icon" id="feedbackIcon"></div>
+          <div class="feedback-title" id="feedbackTitle"></div>
+          <div class="feedback-explanation" id="feedbackExplanation"></div>
+          <div class="feedback-points" id="feedbackPoints"></div>
+          <div class="feedback-next" id="feedbackNext">Next question in <span id="countdown">2</span>s...</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Results Screen -->
+  <div class="results-screen" id="resultsScreen" style="display:none;">
+    <div class="results-card glass-card">
+      <div class="results-header">
+        <div class="results-emoji" id="resultsEmoji">🎉</div>
+        <h1 class="results-title">Game Over!</h1>
+        <p class="results-player" id="resultsPlayer"></p>
+      </div>
+
+      <div class="results-score-display">
+        <div class="score-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" class="score-ring-bg"/>
+            <circle cx="60" cy="60" r="50" class="score-ring-fill" id="scoreRingFill"/>
+          </svg>
+          <div class="score-ring-text">
+            <span class="score-big" id="finalScore">0</span>
+            <span class="score-max">/120</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-stats">
+        <div class="stat-item">
+          <span class="stat-num" id="statCorrect">0</span>
+          <span class="stat-label">Correct</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="statWrong">0</span>
+          <span class="stat-label">Wrong</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="statRank">#—</span>
+          <span class="stat-label">Rank</span>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button class="btn-primary" onclick="replayGame()">↺ Play Again</button>
+        <button class="btn-secondary" onclick="window.location.href='leaderboard.html'">🏆 Leaderboard</button>
+        <button class="btn-ghost" onclick="window.location.href='index.html'">🏠 Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetti container -->
+  <div id="confettiContainer"></div>
+
+  <script src="app.js"></script>
+  <script src="quiz.js"></script>
+</body>
+</html>

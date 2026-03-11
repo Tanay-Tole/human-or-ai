@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HUMAN OR AI? — Leaderboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="leaderboard-page">
+
+  <div class="bg-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="lb-container">
+
+    <!-- Header -->
+    <div class="lb-header">
+      <button class="btn-ghost back-btn" onclick="window.location.href='index.html'">← Back</button>
+      <div class="lb-title-area">
+        <h1 class="lb-title"><span class="txt-accent">🏆</span> Leaderboard</h1>
+        <p class="lb-subtitle">Top Players — Auto-refreshes every 5s</p>
+      </div>
+      <div class="lb-refresh-indicator" id="refreshIndicator">
+        <div class="refresh-ring"></div>
+      </div>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="switchTab('game1', this)">🖼️ Image & Text</button>
+      <button class="lb-tab" onclick="switchTab('game2', this)">💬 Chat Detective</button>
+      <button class="lb-tab" onclick="switchTab('all', this)">🌐 All Games</button>
+    </div>
+
+    <!-- Top 3 podium -->
+    <div class="podium-area" id="podiumArea">
+      <!-- Dynamically rendered -->
+    </div>
+
+    <!-- Full table -->
+    <div class="lb-table-wrap glass-card">
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Game</th>
+            <th>Score</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+          <tr><td colspan="5" class="lb-loading">Loading scores...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Current player highlight -->
+    <div class="current-player-banner" id="currentPlayerBanner" style="display:none;">
+      <span id="currentPlayerText">Your rank: </span>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script src="leaderboard.js"></script>
+</body>
+</html>

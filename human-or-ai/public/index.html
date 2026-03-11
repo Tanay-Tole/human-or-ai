@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HUMAN OR AI? — Can You Tell the Difference?</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="landing-page">
+
+  <!-- Animated background -->
+  <div class="bg-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="landing-container">
+    <div class="landing-card glass-card" id="landingCard">
+
+      <!-- Logo / Title -->
+      <div class="logo-area">
+        <div class="logo-badge">
+          <span class="logo-human">HUMAN</span>
+          <span class="logo-vs">OR</span>
+          <span class="logo-ai">AI?</span>
+        </div>
+        <p class="tagline">Can you tell the difference?</p>
+        <p class="sub-tagline">Test your instincts across images and text</p>
+      </div>
+
+      <!-- Name Input -->
+      <div class="input-group">
+        <label for="playerName" class="input-label">Your Name</label>
+        <div class="input-wrapper">
+          <input type="text" id="playerName" placeholder="Enter your name..." maxlength="24" autocomplete="off" />
+          <div class="input-glow"></div>
+        </div>
+      </div>
+
+      <!-- Mode Selection -->
+      <div class="mode-selector">
+        <p class="mode-label">Choose Your Challenge</p>
+        <div class="mode-grid">
+          <button class="mode-btn active" data-mode="game1" onclick="selectMode('game1')">
+            <div class="mode-icon">🖼️</div>
+            <div class="mode-text">
+              <strong>Image & Text</strong>
+              <span>Guess from visuals + text</span>
+            </div>
+          </button>
+          <button class="mode-btn" data-mode="game2" onclick="selectMode('game2')">
+            <div class="mode-icon">💬</div>
+            <div class="mode-text">
+              <strong>Chat Detective</strong>
+              <span>Is this chatbot human?</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="landing-actions">
+        <button class="btn-primary" id="startBtn" onclick="startGame()">
+          <span class="btn-text">Start Game</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <button class="btn-secondary" onclick="window.location.href='leaderboard.html'">
+          🏆 Leaderboard
+        </button>
+      </div>
+
+      <div class="landing-footer">
+        <span>Max score: 120 pts • 12 questions per round</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Particles container -->
+  <div id="particles"></div>
+
+  <script src="app.js"></script>
+  <script>
+    let selectedMode = 'game1';
+
+    function selectMode(mode) {
+      selectedMode = mode;
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+    }
+
+    function startGame() {
+      const name = document.getElementById('playerName').value.trim();
+      if (!name) {
+        document.getElementById('playerName').classList.add('shake');
+        document.getElementById('playerName').placeholder = 'Please enter your name!';
+        setTimeout(() => {
+          document.getElementById('playerName').classList.remove('shake');
+          document.getElementById('playerName').placeholder = 'Enter your name...';
+        }, 600);
+        return;
+      }
+      const playerId = 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      localStorage.setItem('playerName', name);
+      localStorage.setItem('playerId', playerId);
+      localStorage.setItem('gameMode', selectedMode);
+
+      document.getElementById('landingCard').classList.add('exit-up');
+      setTimeout(() => {
+        window.location.href = selectedMode === 'game1' ? 'quiz.html' : 'chat-game.html';
+      }, 400);
+    }
+
+    document.getElementById('playerName').addEventListener('keydown', e => {
+      if (e.key === 'Enter') startGame();
+    });
+
+    // Floating particles
+    createParticles();
+  </script>
+</body>
+</html>

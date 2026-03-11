@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HUMAN OR AI? — Admin</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-page">
+
+  <div class="bg-grid" style="opacity:0.3;"></div>
+
+  <!-- Login screen -->
+  <div class="admin-login" id="adminLogin">
+    <div class="glass-card admin-login-card">
+      <div class="admin-lock">🔐</div>
+      <h1 class="admin-login-title">Admin Access</h1>
+      <p class="admin-login-sub">HUMAN OR AI? Control Panel</p>
+      <div class="input-group">
+        <input type="text" id="adminUser" placeholder="Username" autocomplete="off" />
+      </div>
+      <div class="input-group">
+        <input type="password" id="adminPass" placeholder="Password" />
+      </div>
+      <div class="admin-login-error" id="loginError" style="display:none;">Invalid credentials</div>
+      <button class="btn-primary" onclick="adminLogin()">Login →</button>
+      <button class="btn-ghost" style="margin-top:8px;" onclick="window.location.href='index.html'">← Back to Game</button>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div class="admin-dashboard" id="adminDashboard" style="display:none;">
+
+    <div class="admin-sidebar">
+      <div class="sidebar-brand">
+        <span class="sidebar-logo">⚙️ Admin</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-btn active" onclick="showAdminTab('leaderboard', this)">
+          <span>🏆</span> Leaderboard
+        </button>
+        <button class="sidebar-btn" onclick="showAdminTab('questions', this)">
+          <span>❓</span> Quiz Content
+        </button>
+        <button class="sidebar-btn" onclick="showAdminTab('chat-questions', this)">
+          <span>💬</span> Chat Content
+        </button>
+        <button class="sidebar-btn" onclick="showAdminTab('settings', this)">
+          <span>⚙️</span> Settings
+        </button>
+      </nav>
+      <button class="sidebar-logout" onclick="adminLogout()">Logout</button>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- TAB: Leaderboard -->
+      <div class="admin-tab" id="tab-leaderboard">
+        <div class="admin-tab-header">
+          <h2>Leaderboard Manager</h2>
+          <div class="admin-actions">
+            <button class="btn-sm btn-accent" onclick="exportCSV()">📥 Export CSV</button>
+            <button class="btn-sm btn-danger" onclick="resetLeaderboard()">🗑️ Reset All</button>
+          </div>
+        </div>
+        <div class="admin-lb-filters">
+          <select id="adminGameFilter" onchange="loadAdminLeaderboard()">
+            <option value="all">All Games</option>
+            <option value="game1">Image & Text</option>
+            <option value="game2">Chat Detective</option>
+          </select>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Rank</th><th>Player</th><th>Game</th><th>Score</th><th>Time</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="adminLbBody">
+              <tr><td colspan="6" class="lb-loading">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB: Quiz Questions -->
+      <div class="admin-tab" id="tab-questions" style="display:none;">
+        <div class="admin-tab-header">
+          <h2>Quiz Content (Game 1)</h2>
+          <button class="btn-sm btn-accent" onclick="openQuestionModal()">+ Add Question</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>#</th><th>Type</th><th>Content Preview</th><th>Answer</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="questionsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB: Chat Questions -->
+      <div class="admin-tab" id="tab-chat-questions" style="display:none;">
+        <div class="admin-tab-header">
+          <h2>Chat Detective Content (Game 2)</h2>
+          <button class="btn-sm btn-accent" onclick="openChatQuestionModal()">+ Add Chat Scenario</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>#</th><th>Contact Name</th><th>Answer</th><th>Messages</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="chatQuestionsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB: Settings -->
+      <div class="admin-tab" id="tab-settings" style="display:none;">
+        <div class="admin-tab-header">
+          <h2>Game Settings</h2>
+        </div>
+        <div class="settings-grid">
+          <div class="setting-card glass-card">
+            <h3>Quiz Questions Count</h3>
+            <p>Number of questions per game session</p>
+            <input type="number" id="settingQCount" value="12" min="5" max="20" />
+            <button class="btn-sm btn-accent" onclick="saveSetting('questionCount', document.getElementById('settingQCount').value)">Save</button>
+          </div>
+          <div class="setting-card glass-card">
+            <h3>Event Mode</h3>
+            <p>Larger fonts, bigger buttons, kiosk-optimized</p>
+            <label class="toggle-switch">
+              <input type="checkbox" id="eventModeToggle" onchange="toggleEventMode(this.checked)" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-card glass-card">
+            <h3>Auto Reset After Game</h3>
+            <p>Automatically return to landing page</p>
+            <label class="toggle-switch">
+              <input type="checkbox" id="autoResetToggle" onchange="saveSetting('autoReset', this.checked)" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-card glass-card danger-card">
+            <h3>Reset Database</h3>
+            <p>Wipe all scores and return to defaults</p>
+            <button class="btn-sm btn-danger" onclick="resetDatabase()">⚠️ Reset Everything</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Question Modal -->
+  <div class="modal-overlay" id="questionModal" style="display:none;">
+    <div class="modal glass-card">
+      <div class="modal-header">
+        <h3 id="questionModalTitle">Add Question</h3>
+        <button class="modal-close" onclick="closeModal('questionModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <label>Type</label>
+          <select id="qType">
+            <option value="text">Text</option>
+            <option value="image">Image</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Content (text or image URL)</label>
+          <textarea id="qContent" rows="3" placeholder="Enter content or image URL..."></textarea>
+        </div>
+        <div class="input-group">
+          <label>Answer</label>
+          <select id="qAnswer">
+            <option value="human">Human</option>
+            <option value="ai">AI</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Explanation</label>
+          <textarea id="qExplanation" rows="2" placeholder="Why is this human or AI?"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('questionModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveQuestion()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Question Modal -->
+  <div class="modal-overlay" id="chatQuestionModal" style="display:none;">
+    <div class="modal glass-card" style="max-width:600px;">
+      <div class="modal-header">
+        <h3 id="chatQuestionModalTitle">Add Chat Scenario</h3>
+        <button class="modal-close" onclick="closeModal('chatQuestionModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <label>Contact Display Name</label>
+          <input type="text" id="cqName" placeholder="e.g. Alex, GPT-Assistant..." />
+        </div>
+        <div class="input-group">
+          <label>Answer</label>
+          <select id="cqAnswer">
+            <option value="human">Human</option>
+            <option value="ai">AI</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Explanation</label>
+          <textarea id="cqExplanation" rows="2" placeholder="How can you tell?"></textarea>
+        </div>
+        <div class="input-group">
+          <label>Clues (comma separated)</label>
+          <input type="text" id="cqClues" placeholder="e.g. Very formal tone, No typos, Structured response" />
+        </div>
+        <div class="input-group">
+          <label>Messages (JSON format)</label>
+          <textarea id="cqMessages" rows="6" placeholder='[{"sender":"them","text":"Hello!"},{"sender":"you","text":"Hi"},{"sender":"them","text":"How can I help?"}]'></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('chatQuestionModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveChatQuestion()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Score Modal -->
+  <div class="modal-overlay" id="editScoreModal" style="display:none;">
+    <div class="modal glass-card" style="max-width:400px;">
+      <div class="modal-header">
+        <h3>Edit Score</h3>
+        <button class="modal-close" onclick="closeModal('editScoreModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editPlayerId" />
+        <div class="input-group">
+          <label>Player Name</label>
+          <input type="text" id="editPlayerName" readonly />
+        </div>
+        <div class="input-group">
+          <label>Score</label>
+          <input type="number" id="editPlayerScore" min="0" max="120" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('editScoreModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveEditedScore()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

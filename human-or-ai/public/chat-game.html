@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HUMAN OR AI? — Chat Detective</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="chat-page">
+
+  <div class="bg-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1" style="background: radial-gradient(circle, #00E5FF33 0%, transparent 70%)"></div>
+    <div class="orb orb-2" style="background: radial-gradient(circle, #6C63FF33 0%, transparent 70%)"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="quiz-hud">
+    <button class="hud-back" onclick="confirmExit()">← Exit</button>
+    <div class="hud-center">
+      <span class="hud-player" id="hudPlayer">Player</span>
+      <span class="hud-badge chat-badge">💬 Chat Detective</span>
+    </div>
+    <div class="hud-score-wrap">
+      <span class="hud-score-label">Score</span>
+      <span class="hud-score" id="hudScore">0</span>
+    </div>
+  </header>
+
+  <!-- Intro Screen -->
+  <div class="chat-intro" id="chatIntro">
+    <div class="glass-card chat-intro-card">
+      <div class="intro-icon">🕵️</div>
+      <h1 class="intro-title">Chat Detective</h1>
+      <p class="intro-desc">You'll be shown a short chat conversation. Your mission: figure out if you're reading messages from a <strong>real human</strong> or an <strong>AI chatbot</strong>.</p>
+      <div class="intro-rules">
+        <div class="rule-item"><span>💡</span> Read the conversation carefully</div>
+        <div class="rule-item"><span>🔍</span> Look for patterns, tone, and naturalness</div>
+        <div class="rule-item"><span>⏱️</span> You have 30 seconds per question</div>
+        <div class="rule-item"><span>🏆</span> 10 points for each correct guess</div>
+      </div>
+      <button class="btn-primary" onclick="startChatGame()">Start Detecting →</button>
+    </div>
+  </div>
+
+  <!-- Main Chat Game -->
+  <main class="chat-main" id="chatMain" style="display:none;">
+
+    <!-- Progress -->
+    <div class="chat-progress-bar">
+      <div class="progress-text">
+        <span id="chatQuestionNum">Round 1</span>
+        <span id="chatQuestionTotal">of 10</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="chatProgressBar"></div>
+      </div>
+    </div>
+
+    <div class="chat-layout">
+      <!-- Chat window -->
+      <div class="chat-window glass-card" id="chatWindow">
+        <div class="chat-window-header">
+          <div class="chat-contact">
+            <div class="chat-avatar" id="chatAvatar">?</div>
+            <div class="chat-contact-info">
+              <strong id="chatContactName">Unknown</strong>
+              <span class="chat-status">● Online</span>
+            </div>
+          </div>
+          <div class="chat-timer-badge">
+            <span id="timerDisplay">30</span>s
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <!-- Messages rendered here -->
+        </div>
+
+        <!-- Timer bar -->
+        <div class="chat-timer-track">
+          <div class="chat-timer-fill" id="chatTimerFill"></div>
+        </div>
+      </div>
+
+      <!-- Decision panel -->
+      <div class="chat-decision">
+        <p class="decision-prompt">Who were you talking to?</p>
+        <button class="answer-btn human-btn chat-answer" id="chatBtnHuman" onclick="submitChatAnswer('human')">
+          <span class="answer-icon">👤</span>
+          <span class="answer-label">HUMAN</span>
+          <span class="answer-sub">Real person</span>
+        </button>
+        <div class="answer-divider">OR</div>
+        <button class="answer-btn ai-btn chat-answer" id="chatBtnAI" onclick="submitChatAnswer('ai')">
+          <span class="answer-icon">🤖</span>
+          <span class="answer-label">AI BOT</span>
+          <span class="answer-sub">Language model</span>
+        </button>
+
+        <!-- Clue hints -->
+        <div class="clue-area" id="clueArea">
+          <p class="clue-label">🔍 Notice anything?</p>
+          <ul class="clue-list" id="clueList"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback overlay -->
+    <div class="feedback-overlay chat-feedback" id="chatFeedbackOverlay" style="display:none;">
+      <div class="feedback-content">
+        <div class="feedback-icon" id="chatFeedbackIcon"></div>
+        <div class="feedback-title" id="chatFeedbackTitle"></div>
+        <div class="feedback-explanation" id="chatFeedbackExplanation"></div>
+        <div class="chat-telltale" id="chatTelltale"></div>
+        <div class="feedback-points" id="chatFeedbackPoints"></div>
+        <div class="feedback-next">Next round in <span id="chatCountdown">3</span>s...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Results Screen -->
+  <div class="results-screen" id="chatResultsScreen" style="display:none;">
+    <div class="results-card glass-card">
+      <div class="results-header">
+        <div class="results-emoji" id="chatResultsEmoji">🕵️</div>
+        <h1 class="results-title">Case Closed!</h1>
+        <p class="results-player" id="chatResultsPlayer"></p>
+      </div>
+
+      <div class="results-score-display">
+        <div class="score-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" class="score-ring-bg"/>
+            <circle cx="60" cy="60" r="50" class="score-ring-fill" id="chatScoreRingFill"/>
+          </svg>
+          <div class="score-ring-text">
+            <span class="score-big" id="chatFinalScore">0</span>
+            <span class="score-max">/100</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-verdict" id="resultsVerdict"></div>
+
+      <div class="results-stats">
+        <div class="stat-item">
+          <span class="stat-num" id="chatStatCorrect">0</span>
+          <span class="stat-label">Correct</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="chatStatWrong">0</span>
+          <span class="stat-label">Wrong</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="chatStatRank">#—</span>
+          <span class="stat-label">Rank</span>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button class="btn-primary" onclick="replayChatGame()">↺ Try Again</button>
+        <button class="btn-secondary" onclick="window.location.href='leaderboard.html'">🏆 Leaderboard</button>
+        <button class="btn-ghost" onclick="window.location.href='index.html'">🏠 Home</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confettiContainer"></div>
+
+  <script src="app.js"></script>
+  <script src="chat-game.js"></script>
+</body>
+</html>
